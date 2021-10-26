@@ -14,15 +14,20 @@ data = pickle.load(open("encodings.pickle","rb"))     # loads - load từ file
 
 # Khởi tạo video stream và pointer to the output video file, để camera warm up một chút
 print("[INFO] starting video stream...")
-video = cv2.VideoCapture(0)     # có thể chọn cam bằng cách thay đổi src
 writer = None
-time.sleep(2.)
-
+frame_rate = 10
+prev = 0
 while True:
+    print("Ready!!!")
+    print(3)
+    time.sleep(1)
+    print(2)
+    time.sleep(1)
+    print(1)
+    video = cv2.VideoCapture(0)    
+    time_elapsed = time.time() - prev
     ret, frame = video.read()
-
-    if not ret:
-        break
+    video.release()
 
     # chuyển frame từ BGR to RGB, resize để tăng tốc độ xử lý
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -81,14 +86,9 @@ while True:
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
         y = top - 15 if top - 15 > 15 else top + 15
 
-        # cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1)
+        cv2.putText(frame, str(name), (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1)
         print(name)
-
-    if writer is not None:  # tiếp tục ghi frame đã chèn bboxes, name vào
-        writer.write(frame)
-    cv2.imshow('Face',frame) 
-    if cv2.waitKey(1)==ord('q'):
-        break
+    # cv2.imshow('Face',frame) 
 
 video.release()
 cv2.destroyAllWindows() 

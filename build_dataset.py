@@ -1,13 +1,7 @@
-# USAGE
-# python build_dataset.py --output dataset/huy
-""" Xây dựng dataset bằng cách chụp webcam """
 import argparse
 import cv2 
 import os
 import sqlite3
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-o", "--output", required=True, help="path to output directory")
-# args = vars(ap.parse_args())
 
 #insert/update data to sqlite
 def insertOrUpdate(Id,Name):
@@ -42,11 +36,8 @@ while True:
 
     if key == ord("k"):
         cv2.imwrite("dataSet/User."+id +'.'+ str(sampleNum) + ".jpg", img=frame)
-        # p = os.path.sep.join([args["output"], "{}.png".format(str(total).zfill(5))])    # điền thêm số 0 bên trái cho đủ 5 kí tự
-        # cv2.imwrite(p, frame)
         sampleNum=sampleNum+1
         total += 1
-	# nhấn q để thoát
     elif key == ord("q"):
 	    break
 

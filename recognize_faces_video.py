@@ -1,80 +1,58 @@
 from os import write
 import face_recognition
-import argparse
 import pickle
 import cv2
 import time
 import imutils
+import datetime 
 
-# load the known faces and encodings
-print("[INFO] loading encodings...")
-# data = pickle.loads("encoding", "rb")      # loads - load từ file
-data = pickle.load(open("encodings.pickle","rb"))     # loads - load từ file
-# data = pickle.loads(open(args["encodings"], "rb")) 
-
-# Khởi tạo video stream và pointer to the output video file, để camera warm up một chút
+print("[INFO] loading encodings...")    
+data = pickle.load(open("encodings.pickle","rb"))     
+tenfile=0
 print("[INFO] starting video stream...")
 writer = None
 frame_rate = 10
 prev = 0
 while True:
-    print("Ready!!!")
+    print("Ready!...")
     print(3)
     time.sleep(1)
     print(2)
     time.sleep(1)
     print(1)
+    time.sleep(1)
     video = cv2.VideoCapture(0)    
     time_elapsed = time.time() - prev
     ret, frame = video.read()
     video.release()
 
-    # chuyển frame từ BGR to RGB, resize để tăng tốc độ xử lý
+    print("Taken success!...")
+
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     rgb = imutils.resize(rgb, width=750)
-    # hệ số scale từ ảnh gốc (frame) về rgb, tí phải dùng bên dưới
     r = frame.shape[1] / float(rgb.shape[1])
 
-    # CŨng làm tương tự cho ảnh test, detect face, extract face ROI, chuyển về encoding
-    # rồi cuối cùng là so sánh kNN để recognize
-    print("[INFO] recognizing faces...")
+
+    print("Recognizing faces...")
     boxes = face_recognition.face_locations(rgb, model="cnn")
     encodings = face_recognition.face_encodings(rgb, boxes)
 
-    # khởi tạo list chứa tên các khuôn mặt phát hiện được
-    # nên nhớ trong 1 ảnh có thể phát hiện được nhiều khuôn mặt nhé
     names = []
 
-    # duyệt qua các encodings của faces phát hiện được trong ảnh
     for encoding in encodings:
-        # khớp encoding của từng face phát hiện được với known encodings (từ datatset)
-        # so sánh list of known encodings và encoding cần check, sẽ trả về list of True/False xem từng known encoding có khớp với encoding check không
-        # có bao nhiêu known encodings thì trả về list có bấy nhiêu phần tử
-        # trong hàm compare_faces sẽ tính Euclidean distance và so sánh với tolerance=0.6 (mặc định), nhó hơn thì khớp, ngược lại thì ko khớp (khác người)
         matches = face_recognition.compare_faces(data["encodings"], encoding)
-        name = "Unknown"    # tạm thời vậy, sau này khớp thì đổi tên
+        name = "Unknown"   
 
-        # Kiểm tra xem từng encoding có khớp với known encodings nào không,
         if True in matches:
-            # lưu các chỉ số mà encoding khớp với known encodings (nghĩa là b == True)
             matchedIdxs = [i for (i, b) in enumerate(matches) if b]
 
-            # tạo dictionary để đếm tổng số lần mỗi face khớp
             counts = {}
-            # duyệt qua các chỉ số được khớp và đếm số lượng 
             for i in matchedIdxs:
-                name = data["names"][i]     # tên tương ứng known encoding khiowps với encoding check
-                counts[name] = counts.get(name, 0) + 1  # nếu chưa có trong dict thì + 1, có rồi thì lấy số cũ + 1
-
-            # lấy tên có nhiều counts nhất (tên có encoding khớp nhiều nhất với encoding cần check)
-            # có nhiều cách để có thể sắp xếp list theo value ví dụ new_dic = sorted(dic.items(), key=lambda x: x[1], reverse=True)
-            # nó sẽ trả về list of tuple, mình chỉ cần lấy name = new_dic[0][0]
+                name = data["names"][i]     
+                counts[name] = counts.get(name, 0) + 1  
             name = max(counts, key=counts.get)
 
         names.append(name)
-
-    # Duyệt qua các bounding boxes và vẽ nó trên ảnh kèm thông tin
-    # Nên nhớ recognition_face trả bounding boxes ở dạng (top, rights, bottom, left)
 
     for ((top, right, bottom, left), name) in zip(boxes, names):
         """ Do đang làm việc với rgb đã resize rồi nên cần rescale về ảnh gốc (frame), nhớ chuyển về int """
@@ -88,11 +66,9 @@ while True:
 
         cv2.putText(frame, str(name), (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1)
         print(name)
-    # cv2.imshow('Face',frame) 
+        tenfile+=1
+    cv2.imwrite("inputImage/"+str(datetime.datetime.now().strftime("%m_%d_%Y %H_%M_%S"))+ ".jpg", img=frame)
+                            
 
-video.release()
 cv2.destroyAllWindows() 
 
-# check to see if the video writer point needs to be released
-if writer is not None:
-	writer.release()

@@ -9,7 +9,7 @@ import imutils
 # load the known faces and encodings
 print("[INFO] loading encodings...")
 # data = pickle.loads("encoding", "rb")      # loads - load từ file
-data = pickle.load(open("encoding.pickle","rb"))     # loads - load từ file
+data = pickle.load(open("encodings.pickle","rb"))     # loads - load từ file
 # data = pickle.loads(open(args["encodings"], "rb")) 
 
 # Khởi tạo video stream và pointer to the output video file, để camera warm up một chút

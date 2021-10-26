@@ -70,6 +70,7 @@ while True:
 
     # Duyệt qua các bounding boxes và vẽ nó trên ảnh kèm thông tin
     # Nên nhớ recognition_face trả bounding boxes ở dạng (top, rights, bottom, left)
+
     for ((top, right, bottom, left), name) in zip(boxes, names):
         """ Do đang làm việc với rgb đã resize rồi nên cần rescale về ảnh gốc (frame), nhớ chuyển về int """
         top = int(top * r)
@@ -80,10 +81,14 @@ while True:
         cv2.rectangle(frame, (left, top), (right, bottom), (0, 255, 0), 2)
         y = top - 15 if top - 15 > 15 else top + 15
 
-        cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1)
+        # cv2.putText(frame, name, (left, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 1)
+        print(name)
 
     if writer is not None:  # tiếp tục ghi frame đã chèn bboxes, name vào
         writer.write(frame)
+    cv2.imshow('Face',frame) 
+    if cv2.waitKey(1)==ord('q'):
+        break
 
 video.release()
 cv2.destroyAllWindows() 
@@ -91,7 +96,3 @@ cv2.destroyAllWindows()
 # check to see if the video writer point needs to be released
 if writer is not None:
 	writer.release()
-
-
-
-

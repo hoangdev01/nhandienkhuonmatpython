@@ -36,6 +36,8 @@ for (i, imagePath) in enumerate(imagePaths):
     # lấy tên người từ imagepath
     # name = imagePath.split(os.path.sep)[-2]
     name = getProfile(imagePath.split(".")[1])
+    print(name)
+    print(imagePath)
 
     # load image bằng OpenCV và chuyển từ BGR to RGB (dlib cần)
     image = cv2.imread(imagePath)

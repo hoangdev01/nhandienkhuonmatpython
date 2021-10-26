@@ -1,6 +1,4 @@
-import argparse
 import cv2 
-import os
 import sqlite3
 
 #insert/update data to sqlite

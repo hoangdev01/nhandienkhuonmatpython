@@ -3,14 +3,10 @@
 # python encode_faces.py --dataset dataset --encodings encodings.pickle
 
 from imutils import paths
-import argparse
 import pickle
 import cv2
-import os
 import face_recognition
 import sqlite3
-
-ap =argparse.ArgumentParser()
 
 def getProfile(id):
     conn=sqlite3.connect("FaceBase.db")
